@@ -17,7 +17,7 @@ const CreateUser = () => {
   }
   return (
     <Grid container spacing={2} direction='row' justify='center'>
-      <Grid item xs={6}>
+      <Grid item md={6}>
         <Box component='div'>
           <Card>
             <CardContent>
