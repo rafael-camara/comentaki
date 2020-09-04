@@ -1,20 +1,7 @@
 export const styles = theme => ({
   root: {
-    flex: '1 1 auto',
     overflowY: 'auto',
     padding: theme.spacing(4)
-  },
-  backdrop: {
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    display: 'flex',
-    zIndex: -1,
-    position: 'fixed',
-    alignItems: 'center',
-    touchAction: 'none',
-    justifyContent: 'center'
   },
   content: {
     width: '100%',

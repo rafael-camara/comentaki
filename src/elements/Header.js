@@ -7,7 +7,7 @@ import {
   Link,
   useTheme,
   Box,
-  Button
+  Button,
 } from '@material-ui/core'
 
 import { AuthContext } from '../auth'
@@ -26,7 +26,9 @@ const Header = () => {
         <Box component='div'>
           <Typography variant='button'>
             {auth.user !== null ? (
-              <Button onClick={auth.signout}>Sair</Button>
+              <Button onClick={auth.signout} style={{ color: '#fff' }}>
+                Sair
+              </Button>
             ) : (
               <>
                 <Box component='span' p={1}>

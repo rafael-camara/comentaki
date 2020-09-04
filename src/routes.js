@@ -1,5 +1,5 @@
 import React from 'react'
-import { Container, withStyles } from '@material-ui/core'
+import { Box, withStyles } from '@material-ui/core'
 import { ThemeProvider } from '@material-ui/styles'
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 
@@ -18,13 +18,13 @@ const Routes = ({ classes }) => {
       <ThemeProvider theme={theme}>
         <AuthProvider>
           <Header />
-          <Container className={classes.root} maxWidth='lg'>
+          <Box className={classes.root}>
             <Switch>
               <Route path='/' exact component={Content} />
-              <Route path='/criar' exact component={CreateUser} />
-              <Route path='/entrar' exact component={SignInUser} />
+              <Route path='/criar' component={CreateUser} />
+              <Route path='/entrar' component={SignInUser} />
             </Switch>
-          </Container>
+          </Box>
         </AuthProvider>
       </ThemeProvider>
     </Router>
