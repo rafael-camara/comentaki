@@ -1,14 +1,14 @@
-import React, { useState, useContext } from 'react'
+import React, { useState } from 'react'
 import { TextField, Button, Grid } from '@material-ui/core'
 
 import firebase from './firebase'
 import { useDatabasePush } from './database'
-import { AuthContext } from './auth'
+import { useAuth } from './auth'
 
 const NewComment = () => {
   const [, save] = useDatabasePush('coments')
   const [comment, setComment] = useState('')
-  const auth = useContext(AuthContext)
+  const auth = useAuth()
   if (auth.user === null) {
     return null
   }
@@ -21,8 +21,8 @@ const NewComment = () => {
         createdAt: firebase.database.ServerValue.TIMESTAMP,
         user: {
           id: auth.user.uid,
-          name: displayName || alternativeDisplayName
-        }
+          name: displayName || alternativeDisplayName,
+        },
       })
       setComment('')
     }
@@ -36,7 +36,7 @@ const NewComment = () => {
           rows='3'
           value={comment}
           variant='outlined'
-          onChange={evt => setComment(evt.target.value)}
+          onChange={(evt) => setComment(evt.target.value)}
         />
       </Grid>
       <Grid item xs={12}>

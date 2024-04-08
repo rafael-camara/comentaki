@@ -1,9 +1,8 @@
 *::-webkit-scrollbar {
-  width: 0.5em;
-  height: 0.15em;
+  width: 0.3em;
 }
 *::-webkit-scrollbar-track {
-  background: transparent;
+  background: #ecfdf5;
 }
 *::-webkit-scrollbar-thumb {
   background: #00695f;
@@ -13,17 +12,15 @@
 }
 
 body {
-  font-family: 'Roboto', Arial, sans-serif;
-  margin: 0;
-  padding: 0;
-  background-color: #f7f7f7;
+  font-family: 'Poppins', sans-serif;
+  font-smooth: antialiased;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #99f6e4;
 }
 
-.root {
-  position: fixed;
-  z-index: 1300;
-  right: 0px;
-  bottom: 0px;
-  top: 0px;
-  left: 0px;
+#root {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
 }

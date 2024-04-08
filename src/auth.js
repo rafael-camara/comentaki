@@ -1,18 +1,32 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
+import {
+  getAuth,
+  signOut as fbSignOut,
+  onAuthStateChanged,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  sendPasswordResetEmail as fbSendPasswordResetEmail,
+} from 'firebase/auth'
+
 import firebase from './firebase'
+
+const auth = getAuth(firebase)
 
 export const AuthContext = React.createContext()
 
 const useGetUser = () => {
   const [user, setUser] = useState(null)
   useEffect(() => {
-    firebase.auth().onAuthStateChanged(currentUser => {
-      if (currentUser) {
-        setUser(currentUser)
-      } else {
-        setUser(null)
-      }
+    onAuthStateChanged(auth, (user) => {
+      user ? setUser(user) : setUser(null)
     })
+    // firebase.auth().onAuthStateChanged(currentUser => {
+    //   if (currentUser) {
+    //     setUser(currentUser)
+    //   } else {
+    //     setUser(null)
+    //   }
+    // })
   }, [])
   return user
 }
@@ -20,58 +34,113 @@ const useGetUser = () => {
 const useCreateUser = () => {
   const [state, setState] = useState({
     error: '',
-    success: ''
+    success: '',
   })
   const createUser = (email, passwd) => {
-    firebase
-      .auth()
-      .createUserWithEmailAndPassword(email, passwd)
-      .then(user => {
+    createUserWithEmailAndPassword(auth, email, passwd)
+      .then((user) => {
         if (user) {
-          setState({
-            ...state,
-            success: 'Ok'
-          })
+          setState({ ...state, success: 'Ok' })
         }
       })
-      .catch(err => {
-        setState({
-          ...state,
-          error: err.message
-        })
+      .catch((err) => {
+        setState({ ...state, error: err.message })
       })
+    // firebase
+    //   .auth()
+    //   .createUserWithEmailAndPassword(email, passwd)
+    //   .then((user) => {
+    //     if (user) {
+    //       setState({
+    //         ...state,
+    //         success: 'Ok',
+    //       })
+    //     }
+    //   })
+    //   .catch((err) => {
+    //     setState({
+    //       ...state,
+    //       error: err.message,
+    //     })
+    //   })
   }
   return [state, createUser]
 }
 const useSignInUser = () => {
   const [state, setState] = useState({
     error: '',
-    success: ''
+    success: '',
   })
   const signInUser = (email, passwd) => {
-    firebase
-      .auth()
-      .signInWithEmailAndPassword(email, passwd)
-      .then(user => {
-        if (user) {
-          setState({
-            ...state,
-            success: 'Ok'
-          })
-        }
-      })
-      .catch(err => {
-        setState({
-          ...state,
-          error: err.message
+    try {
+      signInWithEmailAndPassword(auth, email, passwd)
+        .then((user) => {
+          if (user) {
+            setState({ ...state, success: 'Ok' })
+          }
         })
-      })
+        .catch((err) => {
+          setState({ ...state, error: err.message })
+        })
+    } catch {}
+    // firebase
+    //   .auth()
+    //   .signInWithEmailAndPassword(email, passwd)
+    //   .then((user) => {
+    //     if (user) {
+    //       setState({
+    //         ...state,
+    //         success: 'Ok',
+    //       })
+    //     }
+    //   })
+    //   .catch((err) => {
+    //     setState({
+    //       ...state,
+    //       error: err.message,
+    //     })
+    //   })
   }
   return [state, signInUser]
 }
 
-const signout = () => {
-  firebase.auth().signOut()
+const useSendPasswordResetEmail = () => {
+  const [message, setMessage] = useState({
+    type: '',
+    text: '',
+  })
+
+  const sendPasswordResetEmail = (email) => {
+    try {
+      fbSendPasswordResetEmail(auth, email)
+        .then(() => {
+          setMessage({
+            type: 'success',
+            text: 'O e-mail de redefinição foi enviado!',
+          })
+        })
+        .catch((error) => {
+          const errorCode = error.code
+          const errorMessage = error.message
+          setMessage({
+            type: 'error',
+            text: `ERROR: ${errorCode}, Message: ${errorMessage}`,
+          })
+        })
+    } catch {}
+  }
+  return [message, sendPasswordResetEmail]
+}
+
+const signOut = () => {
+  fbSignOut(auth)
+    .then(() => {
+      // Sign-out successful.
+    })
+    .catch((error) => {
+      // An error happened.
+    })
+  // firebase.auth().signOut()
   // .then(() => {
   //   console.log('signout')
   // })
@@ -81,22 +150,32 @@ export const AuthProvider = ({ children }) => {
   const user = useGetUser()
   const [createUserState, createUser] = useCreateUser()
   const [signInUserState, signInUser] = useSignInUser()
+  const [messageReset, sendPasswordResetEmail] = useSendPasswordResetEmail()
+
   return (
     <AuthContext.Provider
       value={{
         user,
         createUser: {
           createUserState,
-          createUser
+          createUser,
         },
         signInUser: {
           signInUserState,
-          signInUser
+          signInUser,
         },
-        signout
+        signOut,
+        messageReset,
+        sendPasswordResetEmail,
       }}
     >
       {children}
     </AuthContext.Provider>
   )
+}
+
+export const useAuth = () => {
+  const auth = useContext(AuthContext)
+
+  return { ...auth }
 }

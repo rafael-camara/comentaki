@@ -1,28 +1,30 @@
-import React, { useContext, useState } from 'react'
+import React, { useState } from 'react'
 import { Redirect } from 'react-router-dom'
 import { Grid, Button, Box, Card, CardContent } from '@material-ui/core'
 
-import { AuthContext } from './auth'
+import { useAuth } from './auth'
 import Form from './elements/Form'
 import Snackbar from './elements/Snackbar'
 
 const CreateUser = () => {
-  const auth = useContext(AuthContext)
+  const auth = useAuth()
   const [form, setForm] = useState({
     email: '',
-    passwd: ''
+    passwd: '',
   })
   if (auth.user !== null) {
     return <Redirect to='/' />
   }
   return (
-    <Grid container spacing={2} direction='row' justify='center'>
+    <Grid container spacing={2} direction='row' justifyContent='center'>
       <Grid item md={6}>
         <Box component='div'>
           <Card>
             <CardContent>
               {auth.createUser.createUserState.error !== '' && (
-                <Snackbar>{auth.createUser.createUserState.error}</Snackbar>
+                <Snackbar type='error'>
+                  {auth.createUser.createUserState.error}
+                </Snackbar>
               )}
               <Grid container spacing={2}>
                 <Form form={form} setForm={setForm} />

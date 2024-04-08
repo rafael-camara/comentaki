@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import {
   Box,
   Card,
@@ -6,20 +6,20 @@ import {
   Avatar,
   Divider,
   CardContent,
-  Grid
+  Grid,
 } from '@material-ui/core'
 import { Comment } from '@material-ui/icons'
 
-import { AuthContext } from './auth'
+import { useAuth } from './auth'
 
 import NewComment from './NewComment'
 import Comments from './Comments'
 import UserInfo from './UserInfo'
 
 export default function Content() {
-  const auth = useContext(AuthContext)
+  const auth = useAuth()
   return (
-    <Grid container spacing={2} direction='row' justify='center'>
+    <Grid container spacing={2} direction='row' justifyContent='center'>
       <Grid item md={auth.user !== null ? 7 : 6}>
         <Box component='div'>
           <Card>

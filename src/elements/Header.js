@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import { Link as RouterLink } from 'react-router-dom'
 import {
   AppBar,
@@ -9,18 +9,19 @@ import {
   Box,
   Button,
 } from '@material-ui/core'
+import { Comment } from '@material-ui/icons'
 
-import { AuthContext } from '../auth'
+import { useAuth } from '../auth'
 
 const Header = () => {
   const theme = useTheme()
-  const auth = useContext(AuthContext)
+  const auth = useAuth()
   return (
     <AppBar position='sticky'>
       <Toolbar style={{ padding: theme.spacing(0, 4) }}>
         <Typography variant='h6' style={{ flexGrow: 1 }}>
           <Link component={RouterLink} to='/' color='inherit' underline='none'>
-            COMENTAKI
+            <Comment /> COMENTAKI
           </Link>
         </Typography>
         <Box component='div'>

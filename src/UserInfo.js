@@ -1,11 +1,11 @@
-import React, { useState, useContext } from 'react'
+import React, { useState } from 'react'
 import { Typography, TextField, Button, Grid } from '@material-ui/core'
 
-import { AuthContext } from './auth'
+import { useAuth } from './auth'
 
 const FormDisplayName = ({ displayName, user }) => {
   const [newDisplayName, setNewDisplayName] = useState(displayName)
-  const onChange = evt => {
+  const onChange = (evt) => {
     setNewDisplayName(evt.target.value)
   }
   const save = () => {
@@ -34,7 +34,7 @@ const FormDisplayName = ({ displayName, user }) => {
 }
 
 const UserInfo = () => {
-  const auth = useContext(AuthContext)
+  const auth = useAuth()
 
   if (auth.user === null) {
     return null

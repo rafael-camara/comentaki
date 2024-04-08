@@ -18,6 +18,7 @@ const styles = {
 
 const Comments = ({ classes }) => {
   const data = useDatabase('coments')
+  
   if (!data) {
     return (
       <Box m={3} className={classes.boxContainer}>
@@ -30,8 +31,11 @@ const Comments = ({ classes }) => {
   const ids = Object.keys(data)
   if (ids.length === 0) {
     return (
-      <Box m={3} className={classes.boxContainer}>
+      <Box m={3} flexDirection='column' gridGap={16} className={classes.boxContainer}>
         <CircularProgress />
+        <Typography variant='body1'>
+          Carregando comentários..
+        </Typography>
       </Box>
     )
   }
