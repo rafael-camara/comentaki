@@ -1,6 +1,6 @@
 export interface IComment {
   content: string
-  createdAt: Date
+  createdAt: number
   user: IUser
 }
 

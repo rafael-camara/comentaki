@@ -1,60 +1,67 @@
-import { ChangeEvent, useState } from 'react'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { Send } from '@mui/icons-material'
 import {
   Box,
   BoxProps,
   IconButton,
+  IconButtonProps,
   InputBase,
   InputBaseProps,
 } from '@mui/material'
+import { forwardRef } from 'react'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
 
-import { Flex } from '../flex'
+import { useAuth } from '@/context/auth-context'
 import { useDatabase } from '@/hooks/useDatabase'
 import { IComment } from '@/types/comment'
+import { Form } from 'react-router-dom'
+import { Flex } from '../flex'
+
+const commentSchema = z.object({
+  comment: z.string().min(1),
+})
+
+type CommentForm = z.infer<typeof commentSchema>
 
 export function Footer() {
-  const [comment, setComment] = useState('')
+  const { register, handleSubmit, reset } = useForm<CommentForm>({
+    resolver: zodResolver(commentSchema),
+  })
 
-  const { saveData } = useDatabase<IComment>('comments')
+  const { user } = useAuth()
+  const { saveData, TIMESTAMP } = useDatabase<IComment>('comments')
 
-  function handleChange(
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) {
-    // limpar tags HTML
-    const clearText = e.target.value.replace(/<[^>]+>/g, '')
+  function handleSendComment({ comment }: CommentForm) {
+    if (user && user.email) {
+      const name = user.displayName || user.email.split('@')[0]
 
-    setComment(clearText)
-  }
-
-  function handleSubmit() {
-    console.log(comment)
-  }
-
-  function handleSave() {
-    const comment: IComment = {
-      content: 'hello world',
-      createdAt: new Date(),
-      user: {
-        id: 'wBE6f1nuKdfUncUoM1xcCul5HDm2',
-        name: 'Rafael Câmara',
-      },
+      const newComment: IComment = {
+        content: comment,
+        createdAt: TIMESTAMP,
+        user: {
+          id: user.uid,
+          name,
+        },
+      }
+      saveData(newComment)
     }
-    saveData(comment)
+
+    reset()
   }
+
+  if (!user) return null
 
   return (
     <Container>
-      <Flex sx={{ maxWidth: 830, mx: 'auto' }}>
-        <Input value={comment} onChange={handleChange} />
-        <IconButton
-          color='primary'
-          sx={{ p: 2 }}
-          aria-label='directions'
-          onClick={handleSubmit}
-        >
-          <Send />
-        </IconButton>
-      </Flex>
+      <Form onSubmit={handleSubmit(handleSendComment)}>
+        <Flex sx={{ maxWidth: 830, mx: 'auto' }}>
+          <Input {...register('comment')} autoFocus />
+          <SendButton type='submit'>
+            <Send />
+          </SendButton>
+        </Flex>
+      </Form>
     </Container>
   )
 }
@@ -70,21 +77,26 @@ function Container(props: BoxProps) {
   )
 }
 
-function Input(props: InputBaseProps) {
+const Input = forwardRef((props: InputBaseProps, ref) => (
+  <InputBase
+    ref={ref}
+    sx={{
+      py: 1,
+      pl: 3,
+      ml: 2,
+      borderRadius: 1,
+      flex: 1,
+      bgcolor: 'grey.100',
+    }}
+    placeholder='Comentar...'
+    multiline
+    maxRows={3}
+    {...props}
+  />
+))
+
+function SendButton(props: IconButtonProps) {
   return (
-    <InputBase
-      sx={{
-        py: 1,
-        pl: 3,
-        ml: 2,
-        borderRadius: 1,
-        flex: 1,
-        bgcolor: 'grey.100',
-      }}
-      placeholder='Comentário'
-      multiline
-      maxRows={3}
-      {...props}
-    />
+    <IconButton color='primary' sx={{ p: 2 }} aria-label='send' {...props} />
   )
 }

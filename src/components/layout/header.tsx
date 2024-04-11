@@ -1,10 +1,21 @@
 import { Comment } from '@mui/icons-material'
-import { AppBar, Box, Container, Toolbar, Typography } from '@mui/material'
+import {
+  AppBar,
+  Box,
+  Button,
+  Container,
+  Toolbar,
+  Typography,
+} from '@mui/material'
 
 import { Link } from '../link'
 import { Flex } from '../flex'
+import { useAuth } from '@/context/auth-context'
+import { Profile } from '../profile'
 
 export function Header() {
+  const { user } = useAuth()
+
   return (
     <AppBar position='sticky'>
       <Container maxWidth='xl'>
@@ -20,12 +31,15 @@ export function Header() {
             </Link>
           </Box>
 
-          {/* <Box>
-            <Button color='inherit'>
-              <Link to='/login'>Entrar</Link>
-            </Button>
-            <Profile />
-          </Box> */}
+          <Box>
+            {user !== null ? (
+              <Profile />
+            ) : (
+              <Button color='inherit'>
+                <Link to='/login'>Entrar</Link>
+              </Button>
+            )}
+          </Box>
         </Toolbar>
       </Container>
     </AppBar>

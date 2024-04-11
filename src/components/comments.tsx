@@ -1,13 +1,5 @@
 import { useEffect } from 'react'
-import {
-  Box,
-  Card,
-  CardContent,
-  CardHeader,
-  CircularProgress,
-  Divider,
-  Typography,
-} from '@mui/material'
+import { CircularProgress, Typography } from '@mui/material'
 
 import { useDatabase } from '@/hooks/useDatabase'
 import { IComment } from '@/types/comment'
@@ -50,17 +42,5 @@ export function Comments() {
         </Flex>
       ))}
     </>
-  )
-}
-
-export function DisplayName() {
-  return (
-    <Box component='div' position='sticky' top={0}>
-      <Card>
-        <CardHeader avatar={<Avatar />} title='DISPLAY NAME' />
-        <Divider />
-        <CardContent>UserInfo</CardContent>
-      </Card>
-    </Box>
   )
 }

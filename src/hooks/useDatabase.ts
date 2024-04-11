@@ -6,6 +6,7 @@ import {
   ref,
   set,
 } from 'firebase/database'
+import { Timestamp } from 'firebase/firestore'
 import { useEffect, useState } from 'react'
 
 import { database } from '@/firebaseConfig'
@@ -13,10 +14,13 @@ import { database } from '@/firebaseConfig'
 interface DatabaseType<T> {
   data: T
   saveData: (data: T) => void
+  TIMESTAMP: number
 }
 
 export function useDatabase<T>(endpoint: string): DatabaseType<T> {
   const [data, setData] = useState<T>({} as T)
+
+  const TIMESTAMP = Timestamp.now().toMillis()
 
   function readData(databaseRef: DatabaseReference) {
     onValue(databaseRef, (snapshot) => {
@@ -39,5 +43,5 @@ export function useDatabase<T>(endpoint: string): DatabaseType<T> {
     return () => off(databaseRef, 'value')
   }, [endpoint])
 
-  return { data, saveData: writeData }
+  return { data, saveData: writeData, TIMESTAMP }
 }

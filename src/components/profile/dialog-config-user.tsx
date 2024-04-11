@@ -1,3 +1,4 @@
+import { zodResolver } from '@hookform/resolvers/zod'
 import {
   Button,
   Dialog,
@@ -6,8 +7,12 @@ import {
   DialogTitle,
   TextField,
 } from '@mui/material'
-import { useState } from 'react'
+import { useEffect } from 'react'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
 
+import { useAuth } from '@/context/auth-context'
+import { Form } from 'react-router-dom'
 import { Flex } from '../flex'
 
 interface DialogConfigUserProps {
@@ -15,8 +20,41 @@ interface DialogConfigUserProps {
   onClose: () => void
 }
 
+const configUserSchema = z.object({
+  displayName: z
+    .string()
+    .min(1)
+    .transform((value) => value.replace(/<[^>]+>/g, '')),
+})
+
+type ConfigUserForm = z.infer<typeof configUserSchema>
+
 export function DialogConfigUser({ isOpen, onClose }: DialogConfigUserProps) {
-  const [newDisplayName, setNewDisplayName] = useState('')
+  const {
+    register,
+    setValue,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<ConfigUserForm>({
+    resolver: zodResolver(configUserSchema),
+  })
+
+  const { user, updateProfile } = useAuth()
+
+  const displayName =
+    user && user.email ? user.displayName || user.email.split('@')[0] : ''
+
+  async function handleChangeDisplayName({ displayName }: ConfigUserForm) {
+    const clearText = displayName.replace(/<[^>]+>/g, '')
+
+    await updateProfile({ displayName: clearText })
+
+    onClose()
+  }
+
+  useEffect(() => {
+    setValue('displayName', displayName)
+  }, [])
 
   return (
     <Dialog open={isOpen}>
@@ -24,23 +62,26 @@ export function DialogConfigUser({ isOpen, onClose }: DialogConfigUserProps) {
       <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
         <DialogContentText>DISPLAY NAME</DialogContentText>
 
-        <Flex direction='column' sx={{ gap: 2, alignItems: 'end' }}>
-          <TextField
-            label='Display Name'
-            fullWidth
-            variant='outlined'
-            value={newDisplayName}
-            onChange={(e) => setNewDisplayName(e.target.value)}
-          />
-          <Flex gap={2}>
-            <Button variant='outlined' onClick={onClose}>
-              Cancelar
-            </Button>
-            <Button variant='contained' onClick={onClose}>
-              Salvar
-            </Button>
+        <Form onSubmit={handleSubmit(handleChangeDisplayName)}>
+          <Flex direction='column' sx={{ gap: 2, alignItems: 'end' }}>
+            <TextField
+              label='Display Name'
+              fullWidth
+              variant='outlined'
+              {...register('displayName')}
+              error={!!errors.displayName}
+              helperText={errors.displayName?.message}
+            />
+            <Flex gap={2}>
+              <Button variant='outlined' onClick={onClose}>
+                Cancelar
+              </Button>
+              <Button type='submit' variant='contained'>
+                Salvar
+              </Button>
+            </Flex>
           </Flex>
-        </Flex>
+        </Form>
       </DialogContent>
     </Dialog>
   )

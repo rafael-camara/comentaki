@@ -12,7 +12,7 @@ import { Flex } from '@/components/flex'
 
 function LayoutRoot({ children }: { children: ReactNode }) {
   return (
-    <Flex sx={{ placeContent: 'center', p: 3 }}>
+    <Flex sx={{ placeContent: 'center', alignSelf: 'center', p: 3 }}>
       <Card sx={{ maxWidth: 500 }}>
         <CardContent>
           <Flex sx={{ gap: 1 }}>

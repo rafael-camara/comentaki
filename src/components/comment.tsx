@@ -3,7 +3,7 @@ import { Box, BoxProps, Typography, TypographyProps } from '@mui/material'
 import { Flex } from './flex'
 import { ReactNode } from 'react'
 
-const formatTimeStamp = (timestamp: Date) => {
+const formatTimeStamp = (timestamp: number) => {
   const date = new Date(timestamp)
   return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`
 }
@@ -15,7 +15,7 @@ function CommentRoot({ children }: { children: ReactNode }) {
 function Body(props: BoxProps) {
   return (
     <Box
-      sx={{ py: 1, px: 2, bgcolor: 'grey.100', borderRadius: 2 }}
+      sx={{ py: 1, px: 2, bgcolor: 'grey.200', borderRadius: 2 }}
       {...props}
     />
   )
@@ -38,11 +38,16 @@ function TimeStamp({
   timestamp,
   ...rest
 }: TypographyProps & {
-  timestamp: Date
+  timestamp: number
 }) {
   return (
-    <Typography variant='caption' color='textSecondary' {...rest}>
-      {' ⦁ '}
+    <Typography
+      variant='caption'
+      color='textSecondary'
+      sx={{ fontSize: 10 }}
+      {...rest}
+    >
+      {' ~ '}
       {formatTimeStamp(timestamp)}
     </Typography>
   )
